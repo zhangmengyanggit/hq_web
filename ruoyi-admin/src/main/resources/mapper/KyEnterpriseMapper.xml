@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.KyEnterpriseMapper">
+    
+    <resultMap type="KyEnterprise" id="KyEnterpriseResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="address"    column="address"    />
+        <result property="juridicalPerson"    column="juridical_person"    />
+        <result property="juridicalPersonPhone"    column="juridical_person_phone"    />
+        <result property="registrationTime"    column="registration_time"    />
+        <result property="registrationProvince"    column="registration_province"    />
+        <result property="registrationCity"    column="registration_city"    />
+        <result property="registrationRegion"    column="registration_region"    />
+        <result property="manageAddress"    column="manage_address"    />
+        <result property="socialUnifiedCreditCodeNumber"    column="social_unified_credit_code_number"    />
+        <result property="enterpriseNature"    column="enterprise_nature"    />
+        <result property="registrationType"    column="registration_type"    />
+        <result property="totalAssetsRange"    column="total_assets_range"    />
+        <result property="registeredCapital"    column="registered_capital"    />
+        <result property="seeAlso"    column="see_also"    />
+        <result property="officialWebsite"    column="official_website"    />
+        <result property="enterpriseMailbox"    column="enterprise_mailbox"    />
+        <result property="industryOneLevel"    column="industry_one_level"    />
+        <result property="industryTwoLevel"    column="industry_two_level"    />
+        <result property="numberOfEmployees"    column="number_of_employees"    />
+        <result property="businessLicenseUrl"    column="business_license_url"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="tagIds"    column="tag_ids"    />
+        <result property="linkman"    column="linkman"    />
+        <result property="linkmanPhone"    column="linkman_phone"    />
+        <result property="businessTerm"    column="business_term"    />
+        <result property="natureOfBusiness"    column="nature_of_business"    />
+        <result property="registrationAuthority"    column="registration_authority"    />
+        <result property="registrationStreet"    column="registration_street"    />
+        <result property="mainBusiness"    column="main_business"    />
+        <result property="complianceWithPolicyInformation"    column="compliance_with_policy_information"    />
+        <result property="registrationDate"    column="registration_date"    />
+        <result property="bankAccounts"    column="bank_accounts"    />
+        <result property="bankCardNumber"    column="bank_card_number"    />
+    </resultMap>
+
+    <sql id="selectKyEnterpriseVo">
+        select id,main_business,bank_accounts,bank_card_number,registration_date,compliance_with_policy_information,registration_authority,registration_street, nature_of_business,name,business_term,linkman_phone,linkman, address, juridical_person, juridical_person_phone, registration_time, registration_province, registration_city, registration_region, manage_address, social_unified_credit_code_number, enterprise_nature, registration_type, total_assets_range, registered_capital, see_also, official_website, enterprise_mailbox, industry_one_level, industry_two_level, number_of_employees, business_license_url, create_time, create_by,tag_ids from ky_enterprise
+    </sql>
+
+
+    
+    <select id="selectKyEnterpriseById" parameterType="Long" resultMap="KyEnterpriseResult">
+        <include refid="selectKyEnterpriseVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectKyEnterpriseIds"   parameterType="KyEnterprise" resultType="Long">
+        select   id  from  ky_enterprise
+        where 1=1
+
+        <foreach collection="tagIds.split(',')" item="tagId"
+                 index="index" open=" and (" separator=" or " close=")">
+            FIND_IN_SET(#{tagId},tag_ids)
+        </foreach>
+        and business_term >= CURDATE()
+        and  registration_region=#{registrationRegion}
+    </select>
+
+    <select id="selectKyEnterpriseCount"  resultType="Long" parameterType="KyEnterprise">
+    select  count(1)  from     ky_enterprise
+    <where>
+        <if test="registrationRegion!=null and registrationRegion!=''" >
+            and registration_region = #{registrationRegion}
+        </if>
+        and business_term >=  CURDATE()
+    </where>
+
+    </select>
+
+
+    <update id="updateKyEnterprise" parameterType="KyEnterprise">
+        update ky_enterprise
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="juridicalPerson != null">juridical_person = #{juridicalPerson},</if>
+            <if test="juridicalPersonPhone != null">juridical_person_phone = #{juridicalPersonPhone},</if>
+            <if test="registrationTime != null">registration_time = #{registrationTime},</if>
+            <if test="registrationProvince != null">registration_province = #{registrationProvince},</if>
+            <if test="registrationCity != null">registration_city = #{registrationCity},</if>
+            <if test="registrationRegion != null">registration_region = #{registrationRegion},</if>
+            <if test="manageAddress != null">manage_address = #{manageAddress},</if>
+            <if test="socialUnifiedCreditCodeNumber != null">social_unified_credit_code_number = #{socialUnifiedCreditCodeNumber},</if>
+            <if test="enterpriseNature != null">enterprise_nature = #{enterpriseNature},</if>
+            <if test="registrationType != null">registration_type = #{registrationType},</if>
+            <if test="totalAssetsRange != null">total_assets_range = #{totalAssetsRange},</if>
+            <if test="registeredCapital != null">registered_capital = #{registeredCapital},</if>
+            <if test="seeAlso != null">see_also = #{seeAlso},</if>
+            <if test="officialWebsite != null">official_website = #{officialWebsite},</if>
+            <if test="enterpriseMailbox != null">enterprise_mailbox = #{enterpriseMailbox},</if>
+            <if test="industryOneLevel != null">industry_one_level = #{industryOneLevel},</if>
+            <if test="industryTwoLevel != null">industry_two_level = #{industryTwoLevel},</if>
+            <if test="numberOfEmployees != null">number_of_employees = #{numberOfEmployees},</if>
+            <if test="businessLicenseUrl != null">business_license_url = #{businessLicenseUrl},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="tagIds != null">tag_ids=#{tagIds},</if>
+            <if test="linkman != null">linkman=#{linkman},</if>
+            <if test="linkmanPhone != null">linkman_phone=#{linkmanPhone},</if>
+            <if test="businessTerm != null">business_term=#{businessTerm},</if>
+            <if test="natureOfBusiness != null">nature_of_business=#{natureOfBusiness},</if>
+            <if test="registrationAuthority != null">registration_authority=#{registrationAuthority},</if>
+            <if test="registrationStreet != null">registration_street=#{registrationStreet},</if>
+            <if test="mainBusiness != null">main_business=#{mainBusiness},</if>
+            <if test="complianceWithPolicyInformation != null">compliance_with_policy_information=#{complianceWithPolicyInformation},</if>
+            <if test="registrationDate != null">registration_date=#{registrationDate},</if>
+            <if test="bankAccounts != null">bank_accounts = #{bankAccounts},</if>
+            <if test="bankCardNumber != null">bank_card_number = #{bankCardNumber},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+</mapper>

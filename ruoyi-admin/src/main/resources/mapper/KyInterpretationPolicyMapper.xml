@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.KyInterpretationPolicyMapper">
+
+    <resultMap type="KyOriginalPolicy" id="KyInterpretationPolicyResult">
+        <result property="id"    column="id"    />
+        <result property="tittle"    column="tittle"    />
+        <result property="content"    column="content"    />
+        <result property="policyLevel"    column="policy_level"    />
+        <result property="publishingDepartment"    column="publishing_department"    />
+        <result property="policyCategory"    column="policy_category"    />
+        <result property="applicableIndustries"    column="applicable_industries"    />
+        <result property="publishTime"    column="publish_time"    />
+        <result property="state"    column="state"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="appendixUrl"    column="appendix_url"    />
+        <result property="publishUnit"    column="publish_unit"    />
+        <result property="publisher"    column="publisher"    />
+        <result property="meansUrl"    column="means_url"    />
+        <result property="itemStatus"    column="item_status"    />
+        <result property="tagIds"    column="tag_ids"    />
+        <result property="publishStatus"    column="publish_status"    />
+        <result property="validStatus"    column="valid_status"    />
+        <result property="validDate"    column="valid_date"    />
+        <result property="applyForCash"    column="apply_for_cash"    />
+        <result property="redeemContact"    column="redeem_contact"    />
+        <result property="redeemContactPhone"    column="redeem_contact_phone"    />
+        <result property="trade"    column="trade"    />
+        <result property="street"    column="street"    />
+        <result property="region"    column="region"    />
+        <result property="city"    column="city"    />
+        <result property="province"    column="province"    />
+        <result property="interpretationTittle"    column="interpretationTittle"    />
+        <result property="interpretationContent"    column="interpretationContent"    />
+        <result property="interpretationId"    column="interpretationId"    />
+    </resultMap>
+
+    <sql id="selectKyInterpretationPolicyVo">
+          select ip.id as interpretationId, op.tittle,op.id ,op.street,op.region,op.city,op.province, op.content, op.policy_level, op.publishing_department, op.applicable_industries, op.publish_time, op.state, op.create_time, op.create_by, op.appendix_url, op.publish_unit, op.publisher, op.means_url, op.item_status, op.tag_ids, op.publish_status, op.valid_status, op.valid_date, op.trade,ip.tittle as interpretationTittle,ip.content as interpretationContent from ky_interpretation_policy  ip
+           join ky_original_policy  op  on  op.id=ip.original_policy_id
+    </sql>
+
+    <select id="selectKyInterpretationPolicyList" parameterType="KyOriginalPolicy" resultMap="KyInterpretationPolicyResult">
+        <include refid="selectKyInterpretationPolicyVo"/>
+        <where>
+            <if test="tittle != null  and tittle != ''"> and op.tittle like concat('%',#{tittle},'%') </if>
+            <if test="interpretationTittle != null  and interpretationTittle != ''"> and ip.tittle like concat('%',#{interpretationTittle},'%') </if>
+            <if test="policyLevel != null  and policyLevel != ''"> and op.policy_level = #{policyLevel}</if>
+            <if test="policyCategory != null  and policyCategory != ''"> and op.policy_category = #{policyCategory}</if>
+            <if test="applicableIndustries != null  and applicableIndustries != ''"> and op.applicable_industries = #{applicableIndustries}</if>
+            <if test="params.beginPublishTime != null and params.beginPublishTime != ''"><!-- 开始时间检索 -->
+                and date_format(op.publish_time,'%y%m%d') &gt;= date_format(#{params.beginPublishTime},'%y%m%d')
+            </if>
+            <if test="params.endPublishTime != null and params.endPublishTime != ''"><!-- 结束时间检索 -->
+                and date_format(op.publish_time,'%y%m%d') &lt;= date_format(#{params.endPublishTime},'%y%m%d')
+            </if>
+            <if test="state != null  and state != ''"> and op.state = #{state}</if>
+            <if test="itemStatus != null  and itemStatus != ''"> and op.item_status = #{itemStatus}</if>
+            <if test="publishStatus != null "> and op.publish_status = #{publishStatus}</if>
+            <if test="validStatus != null "> and op.valid_status = #{validStatus}</if>
+            <if test="applyForCash != null "> and op.apply_for_cash = #{applyForCash}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(op.valid_date,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(op.valid_date,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            <if test="publishingDepartment!=null and publishingDepartment!=''">
+                and  op.publishing_department=#{publishingDepartment}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectKyInterpretationPolicyById" parameterType="Long" resultMap="KyInterpretationPolicyResult">
+        <include refid="selectKyInterpretationPolicyVo"/>
+        where id = #{id}
+    </select>
+
+
+
+</mapper>
