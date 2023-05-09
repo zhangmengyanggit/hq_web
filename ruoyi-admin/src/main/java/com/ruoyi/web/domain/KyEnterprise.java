@@ -76,12 +76,12 @@ public class KyEnterprise extends BaseEntity
     private String totalAssetsRange;
 
     /** 注册资本(万元) */
-    @Excel(name = "注册资本(万元)",cellType = Excel.ColumnType.NUMERIC)
-    private Long registeredCapital;
+    @Excel(name = "注册资本(万元)")
+    private String registeredCapital;
 
     /** 实收资本(万元) */
-    @Excel(name = "实收资本(万元)",cellType = Excel.ColumnType.NUMERIC)
-    private Long seeAlso;
+    @Excel(name = "实收资本(万元)")
+    private String seeAlso;
 
     /** 官方网站(没有写无) */
     @Excel(name = "官方网站(没有写无)")
@@ -101,8 +101,8 @@ public class KyEnterprise extends BaseEntity
 
     /** 在职人数
     */
-    @Excel(name = "在职人数",cellType = Excel.ColumnType.NUMERIC)
-    private Long numberOfEmployees;
+    @Excel(name = "在职人数")
+    private String numberOfEmployees;
 
     /** 营业执照文件地址 */
     private String businessLicenseUrl;
@@ -398,21 +398,21 @@ public class KyEnterprise extends BaseEntity
     {
         return totalAssetsRange;
     }
-    public void setRegisteredCapital(Long registeredCapital) 
+    public void setRegisteredCapital(String registeredCapital)
     {
         this.registeredCapital = registeredCapital;
     }
 
-    public Long getRegisteredCapital() 
+    public String getRegisteredCapital()
     {
         return registeredCapital;
     }
-    public void setSeeAlso(Long seeAlso) 
+    public void setSeeAlso(String seeAlso)
     {
         this.seeAlso = seeAlso;
     }
 
-    public Long getSeeAlso() 
+    public String getSeeAlso()
     {
         return seeAlso;
     }
@@ -452,12 +452,12 @@ public class KyEnterprise extends BaseEntity
     {
         return industryTwoLevel;
     }
-    public void setNumberOfEmployees(Long numberOfEmployees) 
+    public void setNumberOfEmployees(String numberOfEmployees)
     {
         this.numberOfEmployees = numberOfEmployees;
     }
 
-    public Long getNumberOfEmployees() 
+    public String getNumberOfEmployees()
     {
         return numberOfEmployees;
     }

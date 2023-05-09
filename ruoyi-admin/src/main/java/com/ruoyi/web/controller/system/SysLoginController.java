@@ -1,20 +1,27 @@
 package com.ruoyi.web.controller.system;
 
 import com.ruoyi.common.config.RuoYiConfig;
+import com.ruoyi.common.constant.CacheConstants;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysMenu;
 import com.ruoyi.common.core.domain.entity.SysUserEnterprise;
 import com.ruoyi.common.core.domain.model.LoginBody;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.OfficialSealUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.common.utils.sign.Md5Utils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.framework.config.ServerConfig;
 import com.ruoyi.framework.web.service.SysLoginService;
 import com.ruoyi.system.service.ISysMenuService;
+import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.web.domain.KyEnterprise;
 import com.ruoyi.web.domain.KyOriginalPolicy;
+import com.ruoyi.web.service.IKyEnterpriseService;
 import com.ruoyi.web.service.IKyOriginalPolicyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileCopyUtils;
@@ -43,7 +50,9 @@ public class SysLoginController {
     @Autowired
     private IKyOriginalPolicyService kyOriginalPolicyService;
     @Autowired
-    private ServerConfig serverConfig;
+    private ISysUserService userService;
+    @Autowired
+    private IKyEnterpriseService enterpriseService;
 
     /**
      * 登录方法
@@ -53,6 +62,10 @@ public class SysLoginController {
      */
     @PostMapping("/login")
     public AjaxResult login(@RequestBody LoginBody loginBody) {
+        if(loginBody.getEnterpriseId()!=null){
+            //保存到缓存中
+            SpringUtils.getBean(RedisCache.class).setCacheObject(CacheConstants.ENTERPRISE_ID_BY_USER_NAME+loginBody.getUsername(),loginBody.getEnterpriseId());
+        }
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
@@ -127,4 +140,23 @@ public class SysLoginController {
         return urlNeed;
     }
 
+    /**
+     * 登录前根据用户名判断是否存在多个用户名相同的用户
+     *
+     * @param userName 登录信息
+     * @return 结果
+     */
+    @GetMapping("/checkLoginByUserName")
+    public AjaxResult checkLoginByUserName(String userName) {
+        AjaxResult ajax = AjaxResult.success();
+        List<KyEnterprise> enterprises = enterpriseService.selectByUserEnterpriseName(userName);
+        if (enterprises.size() > 1) {
+            ajax.put(Constants.HAS_USERNAME_COUNT, false);
+            //根据企业id集合查询企业信息列表
+            ajax.put(Constants.ENTERPRISE_LIST, enterprises);
+        } else {
+            ajax.put(Constants.HAS_USERNAME_COUNT, true);
+        }
+        return ajax;
+    }
 }

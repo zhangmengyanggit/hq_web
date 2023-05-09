@@ -270,4 +270,9 @@ public class SysUserServiceImpl implements ISysUserService
         return userMapper.resetUserPwd(userName, password);
     }
 
+    @Override
+    public SysUserEnterprise selectUserByUserNameAndEnterpriseId(String username, Long enterpriseId) {
+        return userMapper.selectUserByUserNameAndEnterpriseId(username,enterpriseId);
+    }
+
 }

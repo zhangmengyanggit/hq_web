@@ -22,7 +22,7 @@ public class RuoYiConfig
     private String copyrightYear;
 
     /** 实例演示开关 */
-    private boolean demoEnabled;
+    private static boolean demoEnabled;
 
     /** 上传路径 */
     private static String profile;
@@ -73,7 +73,7 @@ public class RuoYiConfig
         this.copyrightYear = copyrightYear;
     }
 
-    public boolean isDemoEnabled()
+    public static boolean isDemoEnabled()
     {
         return demoEnabled;
     }

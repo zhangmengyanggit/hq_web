@@ -154,5 +154,5 @@ public interface ISysUserService
     public int resetUserPwd(String userName, String password);
 
 
-
+    SysUserEnterprise selectUserByUserNameAndEnterpriseId(String username, Long enterpriseId);
 }

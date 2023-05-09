@@ -26,6 +26,18 @@ public class LoginBody
      * 唯一标识
      */
     private String uuid;
+    /**
+     * 企业id
+     */
+    private Long  enterpriseId;
+
+    public Long getEnterpriseId() {
+        return enterpriseId;
+    }
+
+    public void setEnterpriseId(Long enterpriseId) {
+        this.enterpriseId = enterpriseId;
+    }
 
     public String getUsername()
     {

@@ -65,5 +65,10 @@ public class KyEnterpriseServiceImpl implements IKyEnterpriseService {
         return kyEnterpriseMapper.selectKyEnterpriseCount(kyEnterprise);
     }
 
-    
+    @Override
+    public List<KyEnterprise> selectByUserEnterpriseName(String userName) {
+        return kyEnterpriseMapper.selectByUserEnterpriseName(userName);
+    }
+
+
 }

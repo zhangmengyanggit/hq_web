@@ -30,4 +30,6 @@ public interface KyEnterpriseMapper
 
 
     Long selectKyEnterpriseCount(KyEnterprise kyEnterprise);
+
+    List<KyEnterprise> selectByUserEnterpriseName(String userName);
 }

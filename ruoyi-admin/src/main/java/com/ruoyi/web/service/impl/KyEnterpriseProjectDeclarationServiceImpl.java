@@ -1,9 +1,11 @@
 package com.ruoyi.web.service.impl;
 
+import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.framework.config.ServerConfig;
 import com.ruoyi.web.domain.KyEnterpriseAppraise;
 import com.ruoyi.web.domain.KyEnterpriseProjectDeclaration;
-import com.ruoyi.web.domain.KyProjectDeclaration;
 import com.ruoyi.web.mapper.KyEnterpriseProjectDeclarationMapper;
 import com.ruoyi.web.service.IKyEnterpriseAppraiseService;
 import com.ruoyi.web.service.IKyEnterpriseProjectDeclarationService;
@@ -30,6 +32,8 @@ public class KyEnterpriseProjectDeclarationServiceImpl implements IKyEnterpriseP
     private IKyProjectDeclarationService projectDeclarationService;
     @Autowired
     private IKyEnterpriseAppraiseService enterpriseAppraiseService;
+    @Autowired
+    private ServerConfig serverConfig;
     /**
      * 查询企业申请项目
      *
@@ -38,7 +42,38 @@ public class KyEnterpriseProjectDeclarationServiceImpl implements IKyEnterpriseP
      */
     @Override
     public KyEnterpriseProjectDeclarationVo selectKyEnterpriseProjectDeclarationById(Long id) {
-        return kyEnterpriseProjectDeclarationMapper.selectKyEnterpriseProjectDeclarationById(id);
+        KyEnterpriseProjectDeclarationVo enterpriseProjectDeclarationVo= kyEnterpriseProjectDeclarationMapper.selectKyEnterpriseProjectDeclarationById(id);
+        if(StringUtils.isNotEmpty(enterpriseProjectDeclarationVo.getMeansUrl())){
+            String[] urlArr = enterpriseProjectDeclarationVo.getMeansUrl().split(",");
+            StringBuffer sb=new StringBuffer();
+            for (String url : urlArr) {
+                String   urlNeed = RuoYiConfig.getAdminProfile() + url;
+                if(sb.length()==0){
+                    sb.append(urlNeed);
+                }else{
+                    sb.append(",").append(urlNeed);
+                }
+            }
+            if(sb.length()>0){
+                enterpriseProjectDeclarationVo.setMeansUrl(sb.toString());
+            }
+        }
+        //处理身份证和营业执照文件保存路径
+        if(StringUtils.isNotEmpty(enterpriseProjectDeclarationVo.getIdentityCardUrl())){
+            if(RuoYiConfig.isDemoEnabled()){
+                enterpriseProjectDeclarationVo.setIdentityCardUrl(serverConfig.getUrl()+"/prod-api" +enterpriseProjectDeclarationVo.getIdentityCardUrl());
+            }else{
+                enterpriseProjectDeclarationVo.setIdentityCardUrl(serverConfig.getUrl() +enterpriseProjectDeclarationVo.getIdentityCardUrl());
+            }
+        }
+        if(StringUtils.isNotEmpty(enterpriseProjectDeclarationVo.getBusinessLicenseUrl())){
+            if(RuoYiConfig.isDemoEnabled()){
+                enterpriseProjectDeclarationVo.setBusinessLicenseUrl(serverConfig.getUrl() +"/prod-api"+enterpriseProjectDeclarationVo.getBusinessLicenseUrl());
+            }else{
+                enterpriseProjectDeclarationVo.setBusinessLicenseUrl(serverConfig.getUrl() +enterpriseProjectDeclarationVo.getBusinessLicenseUrl());
+            }
+        }
+        return enterpriseProjectDeclarationVo;
     }
 
     /**
@@ -69,10 +104,12 @@ public class KyEnterpriseProjectDeclarationServiceImpl implements IKyEnterpriseP
     public int applyForKyEnterpriseProjectDeclaration(KyEnterpriseProjectDeclarationVo enterpriseProjectDeclarationVo) {
         int returnInt = 0;
         //更新企业申请项目表
-        KyEnterpriseProjectDeclaration  enterpriseProjectDeclaration=new KyEnterpriseProjectDeclaration();
+        KyEnterpriseProjectDeclaration enterpriseProjectDeclaration=new KyEnterpriseProjectDeclaration();
         enterpriseProjectDeclaration.setAuditStatus(1l);
         enterpriseProjectDeclaration.setId(enterpriseProjectDeclarationVo.getId());
         enterpriseProjectDeclaration.setDeclaredFileUrl(enterpriseProjectDeclarationVo.getDeclaredFileUrl());
+        enterpriseProjectDeclaration.setIdentityCardUrl(enterpriseProjectDeclarationVo.getIdentityCardUrl());
+        enterpriseProjectDeclaration.setBusinessLicenseUrl(enterpriseProjectDeclarationVo.getBusinessLicenseUrl());
         returnInt = kyEnterpriseProjectDeclarationMapper.updateKyEnterpriseProjectDeclaration(enterpriseProjectDeclaration);
         if (returnInt == 0) {
             return returnInt;

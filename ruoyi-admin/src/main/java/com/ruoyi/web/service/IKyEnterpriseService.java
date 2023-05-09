@@ -31,4 +31,6 @@ public interface IKyEnterpriseService
 
 
     Long selectKyEnterpriseCount(KyEnterprise kyEnterprise);
+
+    List<KyEnterprise> selectByUserEnterpriseName(String userName);
 }

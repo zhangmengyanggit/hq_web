@@ -97,4 +97,6 @@ public interface SysUserMapper
      */
     public SysUserEnterprise checkEmailUnique(String email);
     public void updateSysUserEnterpriseByParams(SysUserEnterprise sysUserEnterprise);
+
+    public  SysUserEnterprise selectUserByUserNameAndEnterpriseId(@Param("userName") String userName,@Param("enterpriseId") Long enterpriseId);
 }

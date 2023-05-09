@@ -1,6 +1,9 @@
 package com.ruoyi.framework.web.service;
 
+import com.ruoyi.common.constant.CacheConstants;
 import com.ruoyi.common.core.domain.entity.SysUserEnterprise;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.service.ISysUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +38,9 @@ public class UserDetailsServiceImpl implements UserDetailsService
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {
-        SysUserEnterprise user = userService.selectUserByUserName(username);
+        //获取缓存中企业id
+        Long enterpriseId= SpringUtils.getBean(RedisCache.class).getCacheObject(CacheConstants.ENTERPRISE_ID_BY_USER_NAME+username);
+        SysUserEnterprise user = userService.selectUserByUserNameAndEnterpriseId(username,enterpriseId);
         if (StringUtils.isNull(user))
         {
             log.info("登录用户：{} 不存在.", username);
